@@ -1,0 +1,43 @@
+#call {
+    -fx-text-fill: white;
+    -fx-background-radius: 0;
+    -fx-background-color: #00c853;
+}
+
+#call:dismiss {
+    -fx-background-color: #ee5131;
+}
+
+#call:hover:dismiss {
+    -fx-background-color: #dd5131;
+}
+
+#call:pressed:dismiss {
+    -fx-background-color: #cc5131;
+}
+
+#call:hover {
+    -fx-background-color: #00b853;
+}
+
+#call:pressed {
+    -fx-background-color: #00a853;
+}
+
+#call:disabled {
+    -fx-background-color: #666666;
+}
+
+.local-video {
+	-fx-max-height: 100;
+}
+.local-video > .border {
+	-fx-arc-width: 8;
+	-fx-arc-height: 8;
+	-fx-fill: null;
+	-fx-stroke: #2C5282;
+	-fx-stroke-width: 3;
+}
+.local-video:hover > .border {
+	-fx-stroke: #2B6CB0;
+}
