@@ -1,0 +1,13 @@
+.local-video {
+	-fx-max-height: 100;
+}
+.local-video > .border {
+	-fx-arc-width: 8;
+	-fx-arc-height: 8;
+	-fx-fill: null;
+	-fx-stroke: #2C5282;
+	-fx-stroke-width: 3;
+}
+.local-video:hover > .border {
+	-fx-stroke: #2B6CB0;
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="500.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MembersController">
+    <center>
+        <ListView fx:id="members" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
+    </center>
+    <bottom>
+        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" text="Позвонить"
+                BorderPane.alignment="CENTER" fx:id="callBtn"/>
+    </bottom>
+</BorderPane>

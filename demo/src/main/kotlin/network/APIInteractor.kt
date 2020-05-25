@@ -1,16 +1,17 @@
+package network
+
 import dev.onvoid.webrtc.RTCIceCandidate
 import dev.onvoid.webrtc.RTCSdpType
 import dev.onvoid.webrtc.RTCSessionDescription
-import org.example.SignallingService
-import org.example.SocketClient
+import SignallingService
 import org.json.JSONObject
 
 class APIInteractor(
-    private val onMembers: (List<String>) -> Unit
+    private val onMembers: (List<String>) -> Unit,
+    private val onIncomingCall: (String, RTCSessionDescription) -> Unit
 ) : SignallingService {
 
-    private var localSessionId: String = ""
-    var activeSessionId: String = ""
+    private var remoteSessionId: String = ""
 
     private lateinit var sdpEvent: (RTCSessionDescription) -> Unit
     private lateinit var iceEvent: (RTCIceCandidate) -> Unit
@@ -19,18 +20,14 @@ class APIInteractor(
         SocketClient { message ->
             when {
                 message.has("members") -> {
-                    localSessionId = message.getString("currentSessionId")
-                    onMembers(
-                        message.getJSONArray("members").toList()
-                            .map(Any::toString)
-                            .filter { it != localSessionId }
-                    )
+                    onMembers(message.getJSONArray("members").toList().map(Any::toString))
                 }
                 message.has("sdp") -> {
-                    activeSessionId = message.getString("fromSessionId")
+                    remoteSessionId = message.getString("sessionId")
                     val sdp = message.getJSONObject("sdp").getString("sdp")
                     val type = message.getJSONObject("sdp").getString("type")
-                    sdpEvent(RTCSessionDescription(RTCSdpType.valueOf(type.toUpperCase()), sdp))
+                    val description = RTCSessionDescription(RTCSdpType.valueOf(type.toUpperCase()), sdp)
+                    if (type == "OFFER") onIncomingCall(remoteSessionId, description) else sdpEvent(description)
 
                 }
                 message.has("candidate") -> {
@@ -43,28 +40,32 @@ class APIInteractor(
         }
     }
 
+    init {
+        socketClient.connect()
+    }
+
     fun close() {
         socketClient.close()
     }
 
-    fun initSockets() {
-        socketClient.connect()
-    }
-
-    override fun onIceReceived(listener: (RTCIceCandidate) -> Unit) {
+    override fun setOnICEReceived(listener: (RTCIceCandidate) -> Unit) {
         iceEvent = listener
     }
 
-    override fun onSdpReceived(listener: (RTCSessionDescription) -> Unit) {
+    override fun setOnSDPReceived(listener: (RTCSessionDescription) -> Unit) {
         sdpEvent = listener
     }
 
-    override fun sendICE(rtcIceCandidate: RTCIceCandidate) {
-        sendMessage(activeSessionId, rtcIceCandidate)
+    override fun sendICE(ice: RTCIceCandidate) {
+        sendMessage(remoteSessionId, ice)
     }
 
-    override fun sendSDP(rtcSessionDescription: RTCSessionDescription) {
-        sendMessage(activeSessionId, rtcSessionDescription)
+    override fun sendSDP(sdp: RTCSessionDescription) {
+        sendMessage(remoteSessionId, sdp)
+    }
+
+    fun setActiveSessionId(sessionId: String) {
+        remoteSessionId = sessionId
     }
 
     private fun sendMessage(sessionId: String, message: Any) {
@@ -73,7 +74,7 @@ class APIInteractor(
     }
 
     private fun prepareMessage(sessionId: String, message: Any): String {
-        val json = JSONObject(mapOf("sessionId" to sessionId, "fromSessionId" to localSessionId))
+        val json = JSONObject(mapOf("sessionId" to sessionId))
         when (message) {
             is RTCIceCandidate -> {
                 val candidate = JSONObject().apply {
@@ -86,7 +87,7 @@ class APIInteractor(
             is RTCSessionDescription -> {
                 val sdp = JSONObject().apply {
                     put("sdp", message.sdp);
-                    put("type", message.sdpType.toString().toLowerCase());
+                    put("type", message.sdpType.toString().toUpperCase());
                 }
                 json.put("sdp", sdp)
             }

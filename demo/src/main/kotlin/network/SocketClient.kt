@@ -1,4 +1,4 @@
-package org.example
+package network
 
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake

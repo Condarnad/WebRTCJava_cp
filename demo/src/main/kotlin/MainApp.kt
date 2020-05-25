@@ -1,5 +1,3 @@
-package org.example
-
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -8,20 +6,18 @@ import javafx.stage.Stage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-
 class MainApp : Application() {
 
     @Throws(Exception::class)
     override fun start(stage: Stage) {
-        val loader = FXMLLoader(javaClass.getResource("scene.fxml"))
+        val loader = FXMLLoader(javaClass.getResource("members.fxml"))
         val root: Parent = loader.load()
         val scene = Scene(root)
         stage.minWidth = root.minWidth(-1.0)
         stage.minHeight = root.minHeight(-1.0)
-        scene.stylesheets.add(javaClass.getResource("styles.css").toExternalForm())
         stage.title = "WebRTC Demo"
         stage.scene = scene
-        stage.setOnHidden { (loader.getController() as? FXMLController)?.close()  }
+        //stage.setOnHidden { (loader.getController() as? VideocallController)?.close()  }
         stage.show()
     }
 

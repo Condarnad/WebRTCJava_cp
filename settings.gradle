@@ -1,2 +1,2 @@
+include ':demo', ':easywebrtc'
 rootProject.name = 'javademo'
-
