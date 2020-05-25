@@ -13,13 +13,15 @@ class MainApp : Application() {
 
     @Throws(Exception::class)
     override fun start(stage: Stage) {
-        val root: Parent = FXMLLoader.load(javaClass.getResource("scene.fxml"))
+        val loader = FXMLLoader(javaClass.getResource("scene.fxml"))
+        val root: Parent = loader.load()
         val scene = Scene(root)
         stage.minWidth = root.minWidth(-1.0)
         stage.minHeight = root.minHeight(-1.0)
         scene.stylesheets.add(javaClass.getResource("styles.css").toExternalForm())
         stage.title = "WebRTC Demo"
         stage.scene = scene
+        stage.setOnHidden { (loader.getController() as? FXMLController)?.close()  }
         stage.show()
     }
 
@@ -27,8 +29,6 @@ class MainApp : Application() {
         @JvmStatic
         fun main(vararg args: String) {
             val logger: Logger = LoggerFactory.getLogger(MainApp::class.java)
-            logger.info("This is how you configure Log4J with SLF4J")
-
             launch(MainApp::class.java, *args)
         }
     }

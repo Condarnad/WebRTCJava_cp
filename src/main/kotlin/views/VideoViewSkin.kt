@@ -6,7 +6,6 @@ import dev.onvoid.webrtc.media.video.VideoFrame
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Bounds
 import javafx.scene.control.SkinBase
 import javafx.scene.image.ImageView
@@ -36,15 +35,6 @@ class VideoViewSkin(control: VideoView) : SkinBase<VideoView?>(control) {
         super.dispose()
     }
 
-    private fun createBufferedImage(pixels: ByteArray, width: Int, height: Int): BufferedImage? {
-        val sm = getIndexSampleModel(width, height)
-        val db: DataBuffer = DataBufferByte(pixels, width * height, 0)
-        val raster = Raster.createWritableRaster(sm, db, null)
-        val cm: IndexColorModel = getDefaultColorModel()
-        return BufferedImage(cm, raster, false, null)
-    }
-
-
     private fun getIndexSampleModel(width: Int, height: Int): SampleModel? {
         val icm = getDefaultColorModel()
         val wr = icm.createCompatibleWritableRaster(1, 1)
@@ -70,7 +60,7 @@ class VideoViewSkin(control: VideoView) : SkinBase<VideoView?>(control) {
         val buffer = frame.buffer
         val width = buffer.width
         val height = buffer.height
-        if (Objects.isNull(pixelBuffer) || pixelBuffer!!.width != width || pixelBuffer!!.height != height) {
+        if (pixelBuffer == null || pixelBuffer?.width != width || pixelBuffer?.height != height) {
             byteBuffer = ByteBuffer.allocate(width * height * 4)
             pixelBuffer = PixelBuffer(
                 width,
@@ -78,30 +68,21 @@ class VideoViewSkin(control: VideoView) : SkinBase<VideoView?>(control) {
                 byteBuffer,
                 WritablePixelFormat.getByteBgraPreInstance()
             )
-            imageView!!.image = WritableImage(width, height)
+            Platform.runLater {
+                imageView!!.image = WritableImage(pixelBuffer)
+            }
         }
 
         try {
             VideoBufferConverter.convertFromI420(buffer, byteBuffer, FourCC.ARGB)
-
-            SwingFXUtils.toFXImage(
-                createBufferedImage(byteBuffer!!.array(), width, height),
-                imageView!!.image as? WritableImage
-            )
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        val update = { pixelBuffer!!.updateBuffer { pixBuffer: PixelBuffer<ByteBuffer?>? -> null } }
-        try {
-            if (Platform.isFxApplicationThread()) {
-                update()
-            } else {
-                Platform.runLater(update)
-            }
-        } catch (e: java.lang.Exception) {
-            throw RuntimeException(e)
+        val update = {
+            pixelBuffer!!.updateBuffer { pixBuffer: PixelBuffer<ByteBuffer?>? -> null }
         }
+        Platform.runLater(update)
     }
 
     private fun initLayout(control: VideoView) {

@@ -25,14 +25,14 @@
                 </VBox>
                 <BorderPane HBox.hgrow="ALWAYS">
                     <top>
-                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Label" BorderPane.alignment="CENTER">
+                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Ожидание" BorderPane.alignment="CENTER" fx:id="label">
                             <padding>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                             </padding>
                         </Label>
                     </top>
                     <center>
-                        <StackPane BorderPane.alignment="CENTER">
+                        <StackPane style="-fx-background-color: #000;" BorderPane.alignment="CENTER">
                             <children>
                                 <VideoView fx:id="remoteVideoView" styleClass="remote-video" />
                                 <VideoView fx:id="localVideoView" prefHeight="100.0" prefWidth="100.0" resize="false" styleClass="local-video" StackPane.alignment="BOTTOM_RIGHT">
