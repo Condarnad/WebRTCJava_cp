@@ -1,4 +1,4 @@
-package org.example.views
+package views
 
 import dev.onvoid.webrtc.media.FourCC
 import dev.onvoid.webrtc.media.video.VideoBufferConverter
@@ -80,7 +80,7 @@ class VideoViewSkin(control: VideoView) : SkinBase<VideoView?>(control) {
         }
 
         val update = {
-            pixelBuffer!!.updateBuffer { pixBuffer: PixelBuffer<ByteBuffer?>? -> null }
+            pixelBuffer!!.updateBuffer { null }
         }
         Platform.runLater(update)
     }

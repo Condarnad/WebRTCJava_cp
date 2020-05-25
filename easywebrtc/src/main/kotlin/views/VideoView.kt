@@ -1,4 +1,4 @@
-package org.example.views
+package views
 
 
 import dev.onvoid.webrtc.media.video.VideoFrame
