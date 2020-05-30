@@ -68,9 +68,7 @@ class VideoViewSkin(control: VideoView) : SkinBase<VideoView?>(control) {
                 byteBuffer,
                 WritablePixelFormat.getByteBgraPreInstance()
             )
-            Platform.runLater {
-                imageView!!.image = WritableImage(pixelBuffer)
-            }
+            imageView!!.image = WritableImage(pixelBuffer)
         }
 
         try {

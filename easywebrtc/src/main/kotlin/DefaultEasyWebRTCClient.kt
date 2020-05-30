@@ -1,6 +1,7 @@
 import helpers.CreatePeerConnectionObserver
 import config.EasyWebRTCConfig
 import dev.onvoid.webrtc.*
+import dev.onvoid.webrtc.media.MediaStream
 import dev.onvoid.webrtc.media.MediaStreamTrack
 import dev.onvoid.webrtc.media.audio.AudioSource
 import dev.onvoid.webrtc.media.audio.AudioTrack
@@ -26,21 +27,25 @@ class DefaultEasyWebRTCClient(
 
     init {
         signallingService.setOnICEReceived {
+            println("DEBUG New ice received")
             peerConnection?.addIceCandidate(it)
         }
         signallingService.setOnSDPReceived {
+            println("DEBUG New sdp received")
             if (it.sdpType != RTCSdpType.OFFER) {
-                peerConnection?.setRemoteDescription(it, SetSDPObserver {})
+                peerConnection?.setRemoteDescription(it, SetSDPObserver {
+                    println("DEBUG Remote sdp set")
+                })
             }
         }
     }
 
     override fun initCall() {
-        executor.execute {
+        executor.submit {
             createPeerConnection()
             initMedia()
             createOffer()
-        }
+        }.get()
     }
 
     override fun answerCall(sdp: RTCSessionDescription) {
@@ -51,7 +56,10 @@ class DefaultEasyWebRTCClient(
             initMedia()
             peerConnection?.setRemoteDescription(
                 sdp,
-                SetSDPObserver { createAnswer() }
+                SetSDPObserver {
+                    println("DEBUG Remote sdp set")
+                    createAnswer()
+                }
             )
         }
     }
@@ -104,8 +112,8 @@ class DefaultEasyWebRTCClient(
 
         localVideoTrack = peerConnectionFactory?.createVideoTrack("videoTrack", videoSource)
         try {
-            videoSource?.start()
             easyWebRTCConfig.onLocalVideoTrack(localVideoTrack!!)
+            videoSource?.start()
         } catch (e: java.lang.Exception) {
         }
 
@@ -121,21 +129,30 @@ class DefaultEasyWebRTCClient(
     private fun createOffer() {
         peerConnection?.createOffer(
             RTCOfferOptions(),
-            CreateSDPObserver { executor.execute { setLocalDescription(it) } }
+            CreateSDPObserver {
+                println("DEBUG Offer sdp created")
+                executor.execute { setLocalDescription(it) }
+            }
         )
     }
 
     private fun createAnswer() {
         peerConnection?.createAnswer(
             RTCAnswerOptions(),
-            CreateSDPObserver { executor.execute { setLocalDescription(it) } }
+            CreateSDPObserver {
+                println("DEBUG Answer created")
+                executor.execute { setLocalDescription(it) }
+            }
         )
     }
 
     private fun setLocalDescription(description: RTCSessionDescription) {
         peerConnection?.setLocalDescription(
             description,
-            SetSDPObserver { signallingService.sendSDP(description) }
+            SetSDPObserver {
+                println("DEBUG Local sdp set")
+                signallingService.sendSDP(description)
+            }
         )
     }
 

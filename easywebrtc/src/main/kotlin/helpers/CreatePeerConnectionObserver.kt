@@ -22,20 +22,24 @@ class CreatePeerConnectionObserver(
     }
 
     override fun onConnectionChange(state: RTCPeerConnectionState?) {
+        println("DEBUG Connection change: $state")
         if (state == RTCPeerConnectionState.CLOSED) onHangup()
     }
 
     override fun onSignalingChange(state: RTCSignalingState?) {
+        println("DEBUG Signalling change: $state")
         if (state == RTCSignalingState.CLOSED) onHangup()
     }
 
     override fun onIceConnectionChange(state: RTCIceConnectionState?) {
+        println("DEBUG Ice connection change: $state")
         when (state) {
             RTCIceConnectionState.DISCONNECTED, RTCIceConnectionState.FAILED -> onHangup()
         }
     }
 
     override fun onIceCandidate(ice: RTCIceCandidate?) {
+        println("DEBUG Send ice")
         ice?.let(onIceCandidate)
     }
 }

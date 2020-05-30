@@ -31,7 +31,9 @@ class MembersController : Initializable {
                 }
             },
             onIncomingCall = { sessionId: String, rtcSessionDescription: RTCSessionDescription ->
-                startVideocall(sessionId, rtcSessionDescription)
+                Platform.runLater {
+                    startVideocall(sessionId, rtcSessionDescription)
+                }
             }
         )
     }
@@ -64,5 +66,9 @@ class MembersController : Initializable {
         loader.getController<VideocallController>()?.offerSdp = sdp
         stage.show()
         loader.getController<VideocallController>()?.call()
+    }
+
+    fun close(){
+        apiInteractor.close()
     }
 }

@@ -1,5 +1,5 @@
 .local-video {
-	-fx-max-height: 100;
+	-fx-max-height: 120;
 }
 .local-video > .border {
 	-fx-arc-width: 8;

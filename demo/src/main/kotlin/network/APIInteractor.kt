@@ -24,14 +24,14 @@ class APIInteractor(
                 }
                 message.has("sdp") -> {
                     remoteSessionId = message.getString("sessionId")
-                    val sdp = message.getJSONObject("sdp").getString("sdp")
+                    val sdp = message.getJSONObject("sdp").getString("description")
                     val type = message.getJSONObject("sdp").getString("type")
                     val description = RTCSessionDescription(RTCSdpType.valueOf(type.toUpperCase()), sdp)
                     if (type == "OFFER") onIncomingCall(remoteSessionId, description) else sdpEvent(description)
 
                 }
                 message.has("candidate") -> {
-                    val sdp = message.getJSONObject("candidate").getString("candidate")
+                    val sdp = message.getJSONObject("candidate").getString("sdp")
                     val sdpMid = message.getJSONObject("candidate").getString("sdpMid")
                     val sdpMLineIndex = message.getJSONObject("candidate").getInt("sdpMLineIndex")
                     iceEvent(RTCIceCandidate(sdpMid, sdpMLineIndex, sdp, ""))
@@ -78,7 +78,7 @@ class APIInteractor(
         when (message) {
             is RTCIceCandidate -> {
                 val candidate = JSONObject().apply {
-                    put("candidate", message.sdp)
+                    put("sdp", message.sdp)
                     put("sdpMid", message.sdpMid)
                     put("sdpMLineIndex", message.sdpMLineIndex)
                 }
@@ -86,7 +86,7 @@ class APIInteractor(
             }
             is RTCSessionDescription -> {
                 val sdp = JSONObject().apply {
-                    put("sdp", message.sdp);
+                    put("description", message.sdp);
                     put("type", message.sdpType.toString().toUpperCase());
                 }
                 json.put("sdp", sdp)

@@ -8,14 +8,14 @@
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="150.0" minWidth="300.0" prefHeight="400.0" prefWidth="800.0" style="-fx-background-color: #000;" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.VideocallController">
     <children>
         <VideoView fx:id="remoteVideoView" styleClass="remote-video" />
-        <VideoView fx:id="localVideoView" prefHeight="100.0" prefWidth="100.0" resize="false" styleClass="local-video" StackPane.alignment="BOTTOM_RIGHT">
+        <VideoView fx:id="localVideoView" maxHeight="120.0" maxWidth="300.0" prefHeight="100.0" prefWidth="100.0" resize="false" styleClass="local-video" StackPane.alignment="BOTTOM_RIGHT">
             <StackPane.margin>
                 <Insets bottom="10" left="10" right="10" top="10" />
             </StackPane.margin>
         </VideoView>
         <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="200.0">
             <children>
-                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" fx:id="endCall">
+                <ImageView fx:id="endCall" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                     <HBox.margin>
                         <Insets left="100.0" right="100.0" />
                     </HBox.margin>
@@ -23,7 +23,7 @@
                   <Image url="@end_call.png" />
                </image>
                 </ImageView>
-                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true"  fx:id="muteMic">
+                <ImageView fx:id="muteMic" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@mute_mic.png" />
                     </image>

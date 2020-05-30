@@ -11,6 +11,7 @@ import javafx.fxml.Initializable
 import dev.onvoid.webrtc.media.video.VideoTrack
 import helpers.Consts
 import javafx.scene.image.ImageView
+import javafx.stage.Stage
 import views.VideoView
 import java.net.URL
 import java.util.*
@@ -32,7 +33,9 @@ class VideocallController : Initializable {
     private val defaultEasyWebRTCConfig by lazy {
         object : DefaultEasyWebRTCConfig() {
             override fun onHangup() {
-                Platform.exit()
+                Platform.runLater {
+                    (endCall.scene.window as? Stage)?.close()
+                }
             }
 
             override fun onLocalVideoTrack(remoteVideoTrack: VideoTrack) {
@@ -51,7 +54,6 @@ class VideocallController : Initializable {
                     username = "test"
                     password = "test"
                 })
-                configuration.iceTransportPolicy = RTCIceTransportPolicy.RELAY
                 return configuration
             }
         }
@@ -73,7 +75,7 @@ class VideocallController : Initializable {
 
     private fun initUi() {
         endCall.setOnMouseClicked {
-            close()
+            (endCall.scene.window as? Stage)?.close()
         }
 
         var microphoneEnabled = true

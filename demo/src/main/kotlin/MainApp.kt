@@ -1,3 +1,4 @@
+import controllers.MembersController
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -17,7 +18,7 @@ class MainApp : Application() {
         stage.minHeight = root.minHeight(-1.0)
         stage.title = "WebRTC Demo"
         stage.scene = scene
-        //stage.setOnHidden { (loader.getController() as? VideocallController)?.close()  }
+        stage.setOnHidden { (loader.getController() as? MembersController)?.close()  }
         stage.show()
     }
 
